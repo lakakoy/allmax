@@ -1,11 +1,13 @@
 import React from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
+import InputForm from './components/InputForm'
 
 export default function App() {
   return (
     <Container>
       <GlobalStyle />
       Allmax
+      <InputForm />
     </Container>
   )
 }
@@ -21,5 +23,6 @@ const GlobalStyle = createGlobalStyle`
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `
