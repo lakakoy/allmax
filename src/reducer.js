@@ -8,7 +8,7 @@ const reducer = (state = initialState, action) => {
     case 'PROJECTS_FETCH_SUCCEEDED':
       return {
         ...state,
-        projects: action.payload,
+        projects: [...state.projects, ...action.payload],
       }
     case 'PROJECTS_FETCH_FAILED':
       return {

@@ -1,20 +1,51 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 
 function InputForm(props) {
-  const { fetchProject, projects } = props
+  const { fetchProject } = props
+
+  const [isScrollAvailable, setScrollAvailability] = useState(true)
   const [query, setQuery] = useState('react')
+  const [page, setPage] = useState(1)
 
   const updateText = e => setQuery(e.target.value)
   const handleKeyPress = async e => {
     if (e.charCode === 13) {
-      fetchProject(query)
+      fetchProject(query, page)
     }
   }
 
+  // Infinite Scroll Pagination
+  useEffect(() => {
+    const scrollHandler = () => {
+      const windowBottom =
+        'innerHeight' in window
+          ? window.innerHeight + window.pageYOffset
+          : document.documentElement.offsetHeight + window.pageYOffset
+
+      if (windowBottom >= document.body.scrollHeight && isScrollAvailable) {
+        setScrollAvailability(!isScrollAvailable)
+        setPage(page + 1)
+        fetchProject(query, page)
+      }
+    }
+
+    window.addEventListener('scroll', () => scrollHandler())
+    return () => window.removeEventListener('scroll', scrollHandler)
+  }, [
+    page,
+    query,
+    isScrollAvailable,
+    setScrollAvailability,
+    setPage,
+    fetchProject,
+  ])
+  //
+
   return (
     <Container>
+      <div onClick={() => setPage(page + 1)}>{page}</div>
       <Form>
         <Input
           value={query}
@@ -23,23 +54,8 @@ function InputForm(props) {
           autoFocus
           onKeyPress={handleKeyPress}
         />
-        <Button onClick={() => fetchProject(query)}>Search</Button>
+        <Button onClick={() => fetchProject(query, page)}>Search</Button>
       </Form>
-      <ProjectsContainer>
-        {projects.map(project => {
-          return (
-            <Project key={project.id}>
-              <Name href={project.html_url}>{project.name}</Name>
-              <StarsCount>
-                Stargazers Count - {project.stargazers_count}
-              </StarsCount>
-              <WatchersCount>
-                Watchers Count - {project.watchers_count}
-              </WatchersCount>
-            </Project>
-          )
-        })}
-      </ProjectsContainer>
     </Container>
   )
 }
@@ -65,42 +81,17 @@ const Input = styled.input`
 `
 const Button = styled.button``
 
-const ProjectsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-
-const Project = styled.div`
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
-`
-
-const Name = styled.a``
-const StarsCount = styled.div``
-const WatchersCount = styled.div``
-
-const mapStateToProps = state => {
-  return {
-    projects: state.projects,
-  }
-}
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProject: query =>
+    fetchProject: (query, page) =>
       dispatch({
         type: 'PROJECTS_FETCH_REQUESTED',
-        payload: query,
+        payload: { query, page },
       }),
   }
 }
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(InputForm)

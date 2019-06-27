@@ -2,10 +2,11 @@ import axios from 'axios'
 import jsonpAdapter from 'axios-jsonp'
 import _ from 'lodash'
 
-export async function fetchProjects(subject) {
+export async function fetchProjects(payload) {
   try {
+    const { query, page } = payload
     const response = await axios({
-      url: `https://api.github.com/search/repositories?q=${subject}`,
+      url: `https://api.github.com/search/repositories?q=${query}&page=${page}`,
       adapter: jsonpAdapter,
     })
 

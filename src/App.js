@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
 import InputForm from './components/InputForm'
+import ProjectList from './components/ProjectList'
 
 export default function App() {
   return (
@@ -8,6 +9,7 @@ export default function App() {
       <GlobalStyle />
       <Title>Search on the Github</Title>
       <InputForm />
+      <ProjectList />
     </Container>
   )
 }
