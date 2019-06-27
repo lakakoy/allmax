@@ -6,7 +6,7 @@ export default function App() {
   return (
     <Container>
       <GlobalStyle />
-      Allmax
+      <Title>Search on the Github</Title>
       <InputForm />
     </Container>
   )
@@ -25,4 +25,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`
+
+const Title = styled.div`
+  margin: 5% 0;
 `

@@ -1,30 +1,15 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
 
-const axios = require('axios')
-const jsonpAdapter = require('axios-jsonp')
-const url = 'https://api.github.com/search/repositories'
-
-export default function InputForm() {
+function InputForm(props) {
+  const { fetchProject, projects } = props
   const [query, setQuery] = useState('react')
-  const [projects, setProjects] = useState([])
 
   const updateText = e => setQuery(e.target.value)
-  const handleClick = async () => {
-    try {
-      const results = await axios({
-        url: `${url}?q=${query}`,
-        adapter: jsonpAdapter,
-      })
-
-      if (results.data.data.items) {
-        setProjects(results.data.data.items)
-      }
-    } catch (error) {}
-  }
   const handleKeyPress = async e => {
     if (e.charCode === 13) {
-      await handleClick()
+      fetchProject(query)
     }
   }
 
@@ -38,7 +23,7 @@ export default function InputForm() {
           autoFocus
           onKeyPress={handleKeyPress}
         />
-        <Button onClick={handleClick}>Search</Button>
+        <Button onClick={() => fetchProject(query)}>Search</Button>
       </Form>
       <ProjectsContainer>
         {projects.map(project => {
@@ -99,3 +84,23 @@ const Project = styled.div`
 const Name = styled.a``
 const StarsCount = styled.div``
 const WatchersCount = styled.div``
+
+const mapStateToProps = state => {
+  return {
+    projects: state.projects,
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchProject: query =>
+      dispatch({
+        type: 'PROJECTS_FETCH_REQUESTED',
+        payload: query,
+      }),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InputForm)
