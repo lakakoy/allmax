@@ -3,11 +3,13 @@ import api from './api'
 
 function* fetchProjects(action) {
   try {
-    console.log(action.payload)
     const projects = yield call(api.fetchProjects, action.payload)
     yield put({ type: 'PROJECTS_FETCH_SUCCEEDED', payload: projects })
   } catch (e) {
-    yield put({ type: 'PROJECTS_FETCH_FAILED', payload: e.message })
+    yield put({
+      type: 'PROJECTS_FETCH_FAILED',
+      payload: '[fetchProjects] saga error',
+    })
   }
 }
 

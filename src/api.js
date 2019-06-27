@@ -6,7 +6,7 @@ export async function fetchProjects(payload) {
   try {
     const { query, page } = payload
     const response = await axios({
-      url: `https://api.github.com/search/repositories?q=${query}&page=${page}`,
+      url: `https://api.github.com/search/repositories?q=${query}&page=${page}&per_page=3`,
       adapter: jsonpAdapter,
     })
 
