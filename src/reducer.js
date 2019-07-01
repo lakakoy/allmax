@@ -1,13 +1,12 @@
 const initialState = {
   projects: [],
-  message: '',
+  erorrMessage: '',
   isFetchEnable: true,
   page: 1,
-  query: 'react',
+  query: '',
 }
 
 const reducer = (state = initialState, action) => {
-  console.log(action)
   switch (action.type) {
     case 'PROJECTS_FETCH_SUCCEEDED':
       return {
@@ -19,7 +18,7 @@ const reducer = (state = initialState, action) => {
     case 'PROJECTS_FETCH_FAILED':
       return {
         ...state,
-        message: action.payload,
+        erorrMessage: action.payload,
       }
     case 'SET_FETCH_AVAILABILITY':
       return {

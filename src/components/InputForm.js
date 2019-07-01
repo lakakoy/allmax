@@ -13,20 +13,14 @@ function InputForm(props) {
   } = props
 
   const updateText = e => setQuery(e.target.value)
-  const handleKeyPress = async e => {
-    if (e.charCode === 13) {
-      fetchProjects(query, page)
-    }
-  }
 
   useEffect(() => {
-    function handleScroll() {
+    const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop ===
           document.documentElement.offsetHeight &&
         isFetchEnable
       ) {
-        console.log('hello', isFetchEnable)
         setFetchAvailability(false)
         fetchProjects(query, page)
       }
@@ -44,7 +38,6 @@ function InputForm(props) {
           onChange={updateText}
           placeholder="Search by github project"
           autoFocus
-          onKeyPress={handleKeyPress}
         />
       </Form>
     </Container>
