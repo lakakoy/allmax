@@ -4,31 +4,43 @@ import { connect } from 'react-redux'
 
 function InputForm(props) {
   const {
-    setFetchAvailability,
     fetchProjects,
     isFetchEnable,
     setQuery,
     page,
     query,
+    scrollTouchedBot,
+    isScrollBottom,
+    setLoaderActivity,
+    isLoaderActive,
   } = props
 
   const updateText = e => setQuery(e.target.value)
 
   useEffect(() => {
+    isScrollBottom && !isLoaderActive && setLoaderActivity(true)
+    isScrollBottom && isFetchEnable && fetchProjects(query, page)
+  }, [
+    setLoaderActivity,
+    isLoaderActive,
+    isScrollBottom,
+    isFetchEnable,
+    fetchProjects,
+    query,
+    page,
+  ])
+
+  useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop ===
-          document.documentElement.offsetHeight &&
-        isFetchEnable
-      ) {
-        setFetchAvailability(false)
-        fetchProjects(query, page)
-      }
+      return window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight
+        ? scrollTouchedBot(true)
+        : isScrollBottom && scrollTouchedBot(false)
     }
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [page, isFetchEnable, fetchProjects, query, setFetchAvailability])
+  }, [scrollTouchedBot, isScrollBottom])
 
   return (
     <Container>
@@ -65,8 +77,10 @@ const Input = styled.input`
 `
 
 const mapStateToProps = state => {
-  const { isFetchEnable, page, query } = state
+  const { isFetchEnable, page, query, isScrollBottom, isLoaderActive } = state
   return {
+    isLoaderActive,
+    isScrollBottom,
     isFetchEnable,
     page,
     query,
@@ -79,15 +93,21 @@ const mapDispatchToProps = dispatch => {
         type: 'PROJECTS_FETCH_REQUESTED',
         payload: { query, page },
       }),
-    setFetchAvailability: payload => {
-      dispatch({
-        type: 'SET_FETCH_AVAILABILITY',
-        payload,
-      })
-    },
     setQuery: payload => {
       dispatch({
         type: 'SET_QUERY',
+        payload,
+      })
+    },
+    scrollTouchedBot: payload => {
+      dispatch({
+        type: 'SCROLL_TOUCHED_BOT',
+        payload,
+      })
+    },
+    setLoaderActivity: payload => {
+      dispatch({
+        type: 'SET_LOADER_ACTIVITY',
         payload,
       })
     },

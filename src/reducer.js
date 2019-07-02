@@ -3,17 +3,29 @@ const initialState = {
   erorrMessage: '',
   isFetchEnable: true,
   page: 1,
-  query: '',
+  query: 'reac',
+  isScrollBottom: false,
+  isLoaderActive: false,
 }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SET_LOADER_ACTIVITY':
+      return {
+        ...state,
+        isLoaderActive: action.payload,
+      }
+    case 'SCROLL_TOUCHED_BOT':
+      return {
+        ...state,
+        isScrollBottom: action.payload,
+      }
     case 'PROJECTS_FETCH_SUCCEEDED':
       return {
         ...state,
         projects: [...state.projects, ...action.payload],
-        isFetchEnable: true,
         page: state.page + 1,
+        erorrMessage: initialState.erorrMessage,
       }
     case 'PROJECTS_FETCH_FAILED':
       return {

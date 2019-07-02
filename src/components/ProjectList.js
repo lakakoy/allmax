@@ -3,13 +3,13 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 
 function ProjectList(props) {
-  const { projects, isFetchEnable, page, erorrMessage } = props
+  const { projects, isLoaderActive } = props
 
   return (
     <Container>
       {projects.map(project => {
         return (
-          <Project key={project.id}>
+          <Project key={`${project.full_name}-${project.id}`}>
             <Name href={project.html_url}>{project.name}</Name>
             <StarsCount>
               Stargazers Count - {project.stargazers_count}
@@ -20,9 +20,7 @@ function ProjectList(props) {
           </Project>
         )
       })}
-      <div>Page - {page}</div>
-      <div>isFetchEnable - {`${isFetchEnable}`}</div>
-      <div>Error message - {erorrMessage}</div>
+      {isLoaderActive && <Loader>Fetching more projects...</Loader>}
     </Container>
   )
 }
@@ -37,22 +35,21 @@ const Project = styled.div`
   text-align: center;
   flex-direction: column;
   width: 100%;
-  margin-top: 10px;
+  margin: 10px 0;
   padding: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
 `
 const Name = styled.a``
 const StarsCount = styled.div``
 const WatchersCount = styled.div``
+const Loader = styled.div``
 
 const mapStateToProps = state => {
-  const { isFetchEnable, page, projects, erorrMessage } = state
+  const { projects, isLoaderActive } = state
 
   return {
     projects,
-    isFetchEnable,
-    page,
-    erorrMessage,
+    isLoaderActive,
   }
 }
 
