@@ -9,4 +9,5 @@ module.exports = {
     document: true,
     window: true,
   },
+  plugins: ['flowtype'],
 }

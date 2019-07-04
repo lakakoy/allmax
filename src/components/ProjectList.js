@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 type Props = {
   areProjectsAvailable: boolean,
   isLoaderActive: boolean,
-  projects: Array<Object>,
+  projects: Array,
 }
 
 function ProjectList(props: Props) {
@@ -15,16 +15,10 @@ function ProjectList(props: Props) {
   return (
     <Container>
       {projects.map(project => (
-        <Project key={`${project.full_name}-${project.id}`}>
+        <Project key={project.id}>
           <Name href={project.html_url}>{project.name}</Name>
-          <StarsCount>
-Stargazers Count -
-            {project.stargazers_count}
-          </StarsCount>
-          <WatchersCount>
-Watchers Count -
-            {project.watchers_count}
-          </WatchersCount>
+          <StarsCount>{`Stargazers Count - ${project.stargazers_count}`}</StarsCount>
+          <WatchersCount>{`Watchers Count - ${project.watchers_count}`}</WatchersCount>
         </Project>
       ))}
       {!areProjectsAvailable && (
