@@ -1,11 +1,13 @@
+import _ from 'lodash'
 import constants from './constants'
+import * as ActionTypes from './actions'
 
 const initialState = {
   projects: [],
   erorrMessage: '',
   isFetchEnable: true,
   page: constants.initPage,
-  query: 'reac',
+  query: '',
   isScrollBottom: false,
   isLoaderActive: false,
   areProjectsAvailable: true,
@@ -14,46 +16,46 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LAST_PAGE_REACHED':
+    case ActionTypes.LAST_PAGE_REACHED:
       return {
         ...state,
         isLastPage: action.payload,
       }
-    case 'SET_LOADER_ACTIVITY':
+    case ActionTypes.SET_LOADER_ACTIVITY:
       return {
         ...state,
         isLoaderActive: action.payload,
       }
-    case 'SCROLL_TOUCHED_BOT':
+    case ActionTypes.SCROLL_TOUCHED_BOT:
       return {
         ...state,
         isScrollBottom: action.payload,
       }
-    case 'PROJECTS_FETCH_SUCCEEDED':
+    case ActionTypes.PROJECTS_FETCH_SUCCEEDED:
       return {
         ...state,
-        projects: [...state.projects, ...action.payload.projects],
+        projects: _.uniqBy([...state.projects, ...action.payload.projects], project => project.id),
         page: state.page + 1,
         erorrMessage: initialState.erorrMessage,
         areProjectsAvailable: true,
       }
-    case 'PROJECTS_FETCH_FAILED':
+    case ActionTypes.PROJECTS_FETCH_FAILED:
       return {
         ...state,
         erorrMessage: action.payload,
       }
-    case 'SET_PROJECTS_AVAILABILITY': {
+    case ActionTypes.SET_PROJECTS_AVAILABILITY: {
       return {
         ...state,
         areProjectsAvailable: action.payload,
       }
     }
-    case 'SET_FETCH_AVAILABILITY':
+    case ActionTypes.SET_FETCH_AVAILABILITY:
       return {
         ...state,
         isFetchEnable: action.payload,
       }
-    case 'SET_QUERY':
+    case ActionTypes.SET_QUERY:
       return {
         ...state,
         query: action.payload,

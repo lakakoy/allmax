@@ -1,29 +1,34 @@
+// @flow
 import React from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 
-function ProjectList(props) {
-  const { projects, isLoaderActive, areProjectsAvailable } = props
+type Props = {
+  areProjectsAvailable: boolean,
+  isLoaderActive: boolean,
+  projects: Array<Object>,
+}
+
+function ProjectList(props: Props) {
+  const { areProjectsAvailable, isLoaderActive, projects } = props
 
   return (
     <Container>
-      {projects.map(project => {
-        return (
-          <Project key={`${project.full_name}-${project.id}`}>
-            <Name href={project.html_url}>{project.name}</Name>
-            <StarsCount>
-              Stargazers Count - {project.stargazers_count}
-            </StarsCount>
-            <WatchersCount>
-              Watchers Count - {project.watchers_count}
-            </WatchersCount>
-          </Project>
-        )
-      })}
+      {projects.map(project => (
+        <Project key={`${project.full_name}-${project.id}`}>
+          <Name href={project.html_url}>{project.name}</Name>
+          <StarsCount>
+Stargazers Count -
+            {project.stargazers_count}
+          </StarsCount>
+          <WatchersCount>
+Watchers Count -
+            {project.watchers_count}
+          </WatchersCount>
+        </Project>
+      ))}
       {!areProjectsAvailable && (
-        <NoProjects>
-          No projects available. Please try to enter another request.
-        </NoProjects>
+        <NoProjects>No projects available. Please try to enter another request.</NoProjects>
       )}
       {isLoaderActive && <Loader>Fetching projects...</Loader>}
     </Container>
@@ -54,7 +59,7 @@ const NoProjects = styled.div`
   margin-top: 15px;
 `
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { projects, isLoaderActive, areProjectsAvailable } = state
 
   return {

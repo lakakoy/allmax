@@ -1,9 +1,13 @@
-import { call, put, takeLatest, delay, fork } from 'redux-saga/effects'
-import api from './api'
+import {
+  call, put, takeLatest, delay, fork,
+} from 'redux-saga/effects'
 import _ from 'lodash'
+import api from './api'
 import constants from './constants'
 
-const { perPage, availableResults, initPage } = constants
+const {
+  perPage, availableResults, initPage, minQueryLength,
+} = constants
 
 function* fetchProjects(action) {
   try {
@@ -41,8 +45,8 @@ function* fetchProjects(action) {
       yield delay(_.toInteger(rateLimitResetTime) * 1000)
       yield fetchProjects(action)
     } else if (
-      page >= _.ceil(totalCount / perPage) ||
-      page >= _.ceil(availableResults / perPage) - initPage
+      page >= _.ceil(totalCount / perPage)
+      || page >= _.ceil(availableResults / perPage) - initPage
     ) {
       yield put({
         type: 'PROJECTS_FETCH_FAILED',
@@ -62,10 +66,11 @@ function* fetchProjects(action) {
 
 function* handleInput({ payload }) {
   yield delay(1500)
-  yield payload.length >= 3 &&
-    call(fetchProjects, {
+  if (payload.length >= minQueryLength) {
+    yield call(fetchProjects, {
       payload: { query: payload, page: initPage },
     })
+  }
 }
 
 function* watchInput() {

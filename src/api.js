@@ -4,7 +4,7 @@ import _ from 'lodash'
 import m from 'moment'
 import constants from './constants'
 
-export async function fetchProjects(payload) {
+async function fetchProjects(payload) {
   try {
     const { query, page } = payload
     const response = await axios({
@@ -15,28 +15,26 @@ export async function fetchProjects(payload) {
     })
     const statusCode = _.get(response, ['data', 'meta', 'status'])
 
-    return statusCode === 200
-      ? {
-          totalCount: _.get(response, ['data', 'data', 'total_count']),
-          projects: _.get(response, ['data', 'data', 'items']),
-          statusCode,
-        }
-      : {
-          rateLimitResetTime: m(
-            m(
-              _.get(response, ['data', 'meta', 'X-RateLimit-Reset']),
-              'X'
-            ).format('hh:mm:ss'),
-            'hh:mm:ss'
-          )
-            .subtract(m().format('s'), 'seconds')
-            .format('s'),
-          statusCode,
-          message: _.get(response, ['data', 'data', 'message']),
-        }
-  } catch (error) {}
-
-  return null
+    if (statusCode === 200) {
+      return {
+        totalCount: _.get(response, ['data', 'data', 'total_count']),
+        projects: _.get(response, ['data', 'data', 'items']),
+        statusCode,
+      }
+    }
+    return {
+      rateLimitResetTime: m(
+        m(_.get(response, ['data', 'meta', 'X-RateLimit-Reset']), 'X').format('hh:mm:ss'),
+        'hh:mm:ss',
+      )
+        .subtract(m().format('s'), 'seconds')
+        .format('s'),
+      statusCode,
+      message: _.get(response, ['data', 'data', 'message']),
+    }
+  } catch (error) {
+    throw new Error('[api.fetchProjects]', error)
+  }
 }
 
 const api = {

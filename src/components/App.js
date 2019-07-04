@@ -1,7 +1,8 @@
+// @flow
 import React from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
-import InputForm from './components/InputForm'
-import ProjectList from './components/ProjectList'
+import InputForm from './InputForm'
+import ProjectList from './ProjectList'
 
 export default function App() {
   return (
