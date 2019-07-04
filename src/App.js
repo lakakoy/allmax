@@ -7,7 +7,7 @@ export default function App() {
   return (
     <Container>
       <GlobalStyle />
-      <Title>Search on the Github</Title>
+      <Title>Searching on Github</Title>
       <InputForm />
       <ProjectList />
     </Container>

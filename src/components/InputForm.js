@@ -13,14 +13,21 @@ function InputForm(props) {
     isScrollBottom,
     setLoaderActivity,
     isLoaderActive,
+    areProjectsAvailable,
+    setProjectAvailability,
+    isLastPage,
   } = props
 
-  const updateText = e => setQuery(e.target.value)
+  const updateText = e => {
+    setQuery(e.target.value)
+    !areProjectsAvailable && setProjectAvailability(true)
+  }
 
   useEffect(() => {
-    isScrollBottom && !isLoaderActive && setLoaderActivity(true)
+    isScrollBottom && !isLoaderActive && !isLastPage && setLoaderActivity(true)
     isScrollBottom && isFetchEnable && fetchProjects(query, page)
   }, [
+    isLastPage,
     setLoaderActivity,
     isLoaderActive,
     isScrollBottom,
@@ -77,13 +84,24 @@ const Input = styled.input`
 `
 
 const mapStateToProps = state => {
-  const { isFetchEnable, page, query, isScrollBottom, isLoaderActive } = state
+  const {
+    isFetchEnable,
+    page,
+    query,
+    isScrollBottom,
+    isLoaderActive,
+    areProjectsAvailable,
+    isLastPage,
+  } = state
+
   return {
+    areProjectsAvailable,
     isLoaderActive,
     isScrollBottom,
     isFetchEnable,
     page,
     query,
+    isLastPage,
   }
 }
 const mapDispatchToProps = dispatch => {
@@ -108,6 +126,12 @@ const mapDispatchToProps = dispatch => {
     setLoaderActivity: payload => {
       dispatch({
         type: 'SET_LOADER_ACTIVITY',
+        payload,
+      })
+    },
+    setProjectAvailability: payload => {
+      dispatch({
+        type: 'SET_PROJECTS_AVAILABILITY',
         payload,
       })
     },
