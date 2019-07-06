@@ -4,6 +4,17 @@ import {
 import _ from 'lodash'
 import api from './api'
 import constants from './constants'
+import {
+  SET_PROJECTS_AVAILABILITY,
+  PROJECTS_FETCH_REQUESTED,
+  PROJECTS_FETCH_SUCCEEDED,
+  SET_FETCH_AVAILABILITY,
+  PROJECTS_FETCH_FAILED,
+  SET_LOADER_ACTIVITY,
+  SCROLL_TOUCHED_BOT,
+  LAST_PAGE_REACHED,
+  SET_QUERY,
+} from './actions'
 
 const {
   perPage, availableResults, initPage, minQueryLength,
@@ -11,9 +22,9 @@ const {
 
 function* fetchProjects(action) {
   try {
-    yield put({ type: 'SET_FETCH_AVAILABILITY', payload: false })
-    yield put({ type: 'SET_LOADER_ACTIVITY', payload: true })
-    yield put({ type: 'LAST_PAGE_REACHED', payload: false })
+    yield put({ type: SET_FETCH_AVAILABILITY, payload: false })
+    yield put({ type: SET_LOADER_ACTIVITY, payload: true })
+    yield put({ type: LAST_PAGE_REACHED, payload: false })
 
     const { page } = action.payload
     const {
@@ -24,19 +35,19 @@ function* fetchProjects(action) {
       message = '',
     } = yield call(api.fetchProjects, action.payload)
 
-    yield put({ type: 'SCROLL_TOUCHED_BOT', payload: false })
+    yield put({ type: SCROLL_TOUCHED_BOT, payload: false })
 
     if (projects.length !== 0) {
       yield put({
-        type: 'PROJECTS_FETCH_SUCCEEDED',
+        type: PROJECTS_FETCH_SUCCEEDED,
         payload: { projects, totalCount },
       })
-      yield put({ type: 'SET_LOADER_ACTIVITY', payload: false })
+      yield put({ type: SET_LOADER_ACTIVITY, payload: false })
       yield delay(2000)
-      yield put({ type: 'SET_FETCH_AVAILABILITY', payload: true })
+      yield put({ type: SET_FETCH_AVAILABILITY, payload: true })
     } else if (totalCount === 0) {
-      yield put({ type: 'SET_PROJECTS_AVAILABILITY', payload: false })
-      yield put({ type: 'SET_LOADER_ACTIVITY', payload: false })
+      yield put({ type: SET_PROJECTS_AVAILABILITY, payload: false })
+      yield put({ type: SET_LOADER_ACTIVITY, payload: false })
     } else if (statusCode === 403) {
       yield put({
         type: 'PROJECTS_FETCH_FAILED',
@@ -49,16 +60,16 @@ function* fetchProjects(action) {
       || page >= _.ceil(availableResults / perPage) - initPage
     ) {
       yield put({
-        type: 'PROJECTS_FETCH_FAILED',
+        type: PROJECTS_FETCH_FAILED,
         payload: `statusCode: ${statusCode}, message: ${message}`,
       })
-      yield put({ type: 'LAST_PAGE_REACHED', payload: true })
-      yield put({ type: 'SET_FETCH_AVAILABILITY', payload: false })
-      yield put({ type: 'SET_LOADER_ACTIVITY', payload: false })
+      yield put({ type: LAST_PAGE_REACHED, payload: true })
+      yield put({ type: SET_FETCH_AVAILABILITY, payload: false })
+      yield put({ type: SET_LOADER_ACTIVITY, payload: false })
     }
   } catch (e) {
     yield put({
-      type: 'PROJECTS_FETCH_FAILED',
+      type: PROJECTS_FETCH_FAILED,
       payload: `[sagas.fetchProjects]: ${e.message}`,
     })
   }
@@ -74,11 +85,11 @@ function* handleInput({ payload }) {
 }
 
 function* watchInput() {
-  yield takeLatest('SET_QUERY', handleInput)
+  yield takeLatest(SET_QUERY, handleInput)
 }
 
 function* mySaga() {
-  yield takeLatest('PROJECTS_FETCH_REQUESTED', fetchProjects)
+  yield takeLatest(PROJECTS_FETCH_REQUESTED, fetchProjects)
   yield fork(watchInput)
 }
 

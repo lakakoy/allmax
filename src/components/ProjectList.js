@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 type Props = {
   areProjectsAvailable: boolean,
   isLoaderActive: boolean,
-  projects: Array,
+  projects: Array<Object>,
 }
 
 function ProjectList(props: Props) {
